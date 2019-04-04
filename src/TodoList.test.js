@@ -15,26 +15,31 @@ describe('<TodoList />', () => {
 
   beforeEach(() => {
     console.log('mounting component')
-    jest.useFakeTimers()
+    
     axiosMockInstance = new MockAdapter(axios)
     axiosMockInstance
       .onGet('https://jsonplaceholder.typicode.com/todos')
       .reply(200, [{ id: 1, title: 'a thing' }])
-    act(() => {
-      wrapper = mount(<TodoList />)
-      jest.runAllTimers()
-    })
+    
   })
 
   afterEach(() => {
     axiosMockInstance.restore()
   })
 
-  it('calls its effect', () => {
+  it('calls its effect', async () => {
+    await act(async () => {
+      wrapper = mount(<TodoList />)
+    })
+    
+    // this next line is enzyme specific, you wouldn't need 
+    // this if you used plain react-dom
+    wrapper.update() 
+    
     console.log('in example:')
     console.log(wrapper.debug())
     const todos = wrapper.find('.todo').at(0)
     console.log('this is a test')
-    expect(todos.text()).toBe(10)
+    expect(todos.text()).toBe('a thing')
   })
 })
